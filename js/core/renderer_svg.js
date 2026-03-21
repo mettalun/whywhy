@@ -14,9 +14,9 @@ function buildConnectionPath(fromNode, toNode, metrics, anchorMode) {
   const startY = getNodeAnchorY(fromNode, fromNode.height ?? metrics.nodeHeight, anchorMode);
   const endX = toNode.x;
   const endY = getNodeAnchorY(toNode, toNode.height ?? metrics.nodeHeight, anchorMode);
-  const midX = startX + metrics.horizontalGap / 2;
+  const elbowX = startX + metrics.horizontalGap / 2;
 
-  return `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`;
+  return `M ${startX} ${startY} L ${elbowX} ${startY} L ${elbowX} ${endY} L ${endX} ${endY}`;
 }
 
 function buildBranchPath(fromNode, toNode, metrics, anchorMode) {
@@ -106,6 +106,7 @@ export function renderConnections(svgElement, nodes, metrics, options = {}) {
       line.setAttribute("stroke", "#7b6c62");
       line.setAttribute("stroke-width", "2.5");
       line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("stroke-linejoin", "round");
       line.style.pointerEvents = "none";
       svgElement.appendChild(line);
     }

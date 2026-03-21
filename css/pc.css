@@ -102,6 +102,102 @@ body[data-device="pc"] .pc-shell {
   background: rgba(246, 199, 212, 0.18);
 }
 
+.pc-usage-hint {
+  position: fixed;
+  left: 80px;
+  bottom: 42px;
+  z-index: 4;
+  width: min(220px, calc(100vw - 96px));
+  padding: 14px 16px;
+  border: 1px solid rgba(125, 105, 94, 0.22);
+  border-radius: 18px;
+  background: rgba(255, 251, 247, 0.98);
+  box-shadow: 0 12px 28px rgba(96, 76, 60, 0.12);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.pc-usage-hint[hidden] {
+  display: none;
+}
+
+.pc-usage-hint-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(95, 83, 74, 0.56);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.pc-usage-hint-close-note {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 6px);
+  transform: translateY(-50%);
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(255, 251, 247, 0.96);
+  color: rgba(95, 83, 74, 0.78);
+  font-size: 0.58rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.pc-usage-hint-close:hover,
+.pc-usage-hint-close:focus-visible {
+  background: rgba(125, 105, 94, 0.08);
+  color: rgba(95, 83, 74, 0.88);
+  outline: none;
+}
+
+.pc-usage-hint-close:hover .pc-usage-hint-close-note,
+.pc-usage-hint-close:focus-visible .pc-usage-hint-close-note {
+  opacity: 1;
+}
+
+.pc-usage-hint-title {
+  margin-bottom: 10px;
+  color: #7d695e;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.pc-usage-hint p {
+  margin: 0;
+  color: #5f534a;
+  line-height: 1.65;
+  font-size: 0.96rem;
+}
+
+.pc-usage-hint p + p {
+  margin-top: 6px;
+}
+
+.pc-footer-caption {
+  position: fixed;
+  left: 80px;
+  right: 12px;
+  bottom: 6px;
+  z-index: 3;
+  color: rgba(95, 83, 74, 0.64);
+  font-size: 0.48rem;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
 .pc-canvas {
   position: relative;
   transform-origin: top left;
@@ -296,4 +392,19 @@ body[data-device="pc"] .pc-shell {
 .branch-slot-button:hover {
   border-color: #7d695e;
   box-shadow: 0 0 0 4px rgba(246, 199, 212, 0.35), 0 2px 6px rgba(96, 76, 60, 0.12);
+}
+
+@media (max-width: 900px) {
+  .pc-usage-hint {
+    left: 80px;
+    right: auto;
+    bottom: 42px;
+    width: min(220px, calc(100vw - 96px));
+  }
+
+  .pc-footer-caption {
+    left: 80px;
+    right: 10px;
+    bottom: 6px;
+  }
 }

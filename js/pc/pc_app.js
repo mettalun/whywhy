@@ -21,6 +21,17 @@ export function createPcApp(rootElement) {
       </header>
       <section class="pc-workspace" aria-label="\u306a\u305c\u306a\u305c\u5206\u6790\u30ef\u30fc\u30af\u30b9\u30da\u30fc\u30b9" data-panning="false">
         <div class="pc-drop-hint" data-drop-hint hidden>\u3053\u3053\u306b\u30c9\u30e9\u30c3\u30b0\u3057\u3066\u8aad\u307f\u8fbc\u307f</div>
+        <aside class="pc-usage-hint" aria-label="\u64cd\u4f5c\u30d2\u30f3\u30c8">
+          <button class="pc-usage-hint-close" type="button" aria-label="\u30d2\u30f3\u30c8\u3092\u9589\u3058\u308b" data-usage-hint-close>
+            <span aria-hidden="true">\u00d7</span>
+            <span class="pc-usage-hint-close-note" aria-hidden="true">\u9589\u3058\u308b</span>
+          </button>
+          <div class="pc-usage-hint-title">\u30d2\u30f3\u30c8</div>
+          <p>\u30ea\u30bf\u30fc\u30f3\u3067\u6b21\u306eWhy Box\u3092\u751f\u6210</p>
+          <p>\u25cb\u3092\u30af\u30ea\u30c3\u30af\u3067\u5206\u5c90\u3092\u751f\u6210</p>
+          <p>\u30de\u30a6\u30b9 \u30db\u30a4\u30fc\u30eb\u3067\u62e1\u5927\u7e2e\u5c0f</p>
+        </aside>
+        <div class="pc-footer-caption" aria-hidden="true">WhyWhy Sheet\u306f\u3001\u306a\u305c\u306a\u305c\u5206\u6790\u3092\u30d6\u30e9\u30a6\u30b6\u3067\u7121\u6599\u4f5c\u6210\u3067\u304d\u308b\u539f\u56e0\u5206\u6790\u30c4\u30fc\u30eb\u3067\u3059\u3002 \u30c9\u30e9\u30c3\u30b0\u64cd\u4f5c\u30675Why\u3092\u6574\u7406\u3001\u7d19\u3088\u308a\u901f\u304f\u66f8\u304d\u76f4\u3057\u30bc\u30ed\u3002 PC\u30fb\u30b9\u30de\u30db\u5bfe\u5fdc\u3001\u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u4e0d\u8981\u3001for PC\u306f PDF\u51fa\u529b\u5bfe\u5fdc\u3002</div>
         <div class="pc-stage">
           <div class="pc-canvas">
             <svg class="connection-layer" aria-hidden="true"></svg>
@@ -37,6 +48,8 @@ export function createPcApp(rootElement) {
   const stageElement = rootElement.querySelector(".pc-stage");
   const canvasElement = rootElement.querySelector(".pc-canvas");
   const dropHintElement = rootElement.querySelector("[data-drop-hint]");
+  const usageHintElement = rootElement.querySelector(".pc-usage-hint");
+  const usageHintCloseButton = rootElement.querySelector("[data-usage-hint-close]");
   const viewState = {
     scale: 1,
     minScale: 0.2,
@@ -85,6 +98,16 @@ export function createPcApp(rootElement) {
     canvasElement.style.transform = `scale(${viewState.scale})`;
     workspaceElement.dataset.panning = panState.active ? "true" : "false";
   }
+
+  function setUsageHintVisible(visible) {
+    if (usageHintElement) {
+      usageHintElement.hidden = !visible;
+    }
+  }
+
+  const handleUsageHintClose = () => {
+    setUsageHintVisible(false);
+  };
 
   const editor = new PcEditor({
     treeModel,
@@ -298,6 +321,7 @@ export function createPcApp(rootElement) {
   window.addEventListener("mousemove", handleMouseMove);
   window.addEventListener("mouseup", handleMouseUp);
   window.addEventListener("resize", syncViewport);
+  usageHintCloseButton?.addEventListener("click", handleUsageHintClose);
 
   return {
     destroy() {
@@ -306,6 +330,7 @@ export function createPcApp(rootElement) {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("resize", syncViewport);
+      usageHintCloseButton?.removeEventListener("click", handleUsageHintClose);
       editor.destroy();
     }
   };
