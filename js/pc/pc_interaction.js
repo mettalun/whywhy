@@ -7,6 +7,8 @@ export class PcInteraction {
     this.blurRenderHandle = null;
     this.inputRenderHandle = null;
     this.pendingInputFocus = null;
+    this.stoppedProblemAnimationNodeIds = new Set();
+    this.loadButtonAnimationStopped = false;
   }
 
   render(focusNodeId = null, focusSelectionStart = null, focusSelectionEnd = null) {
@@ -16,13 +18,34 @@ export class PcInteraction {
       focusSelectionEnd,
       onNodeSubmit: (nodeId) => this.handleNodeSubmit(nodeId),
       onNodeBlur: (nodeId) => this.handleNodeBlur(nodeId),
+      onProblemInput: (nodeId) => this.handleProblemInput(nodeId),
       onNodeLayoutChange: ({ nodeId, selectionStart, selectionEnd }) =>
         this.handleNodeLayoutChange(nodeId, selectionStart, selectionEnd),
       onBranchCreate: (nodeId) => this.handleBranchCreate(nodeId),
       onSiblingBranchCreate: (nodeId) => this.handleSiblingBranchCreate(nodeId),
       onDeleteRequest: (nodeId) => this.handleDeleteRequest(nodeId),
-      onFinalizeRequest: (nodeId) => this.handleFinalizeRequest(nodeId)
+      onFinalizeRequest: (nodeId) => this.handleFinalizeRequest(nodeId),
+      shouldAnimateProblemNode: (nodeId) => !this.stoppedProblemAnimationNodeIds.has(nodeId),
+      shouldAnimateLoadButton: () => !this.loadButtonAnimationStopped
     });
+  }
+
+  handleProblemInput(nodeId) {
+    this.stoppedProblemAnimationNodeIds.add(nodeId);
+    this.loadButtonAnimationStopped = true;
+  }
+
+  stopLoadAndProblemAnimations() {
+    this.loadButtonAnimationStopped = true;
+    for (const node of this.treeModel.getNodes()) {
+      if (node.type === "problem") {
+        this.stoppedProblemAnimationNodeIds.add(node.id);
+      }
+    }
+    const problemCards = document.querySelectorAll('.why-node-card[data-type="problem"]');
+    for (const card of problemCards) {
+      card.classList.add("why-node-card-animation-stopped");
+    }
   }
 
   handleNodeSubmit(nodeId) {

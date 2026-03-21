@@ -11,10 +11,10 @@ export function createPcApp(rootElement) {
       <header class="pc-topbar">
         <div class="pc-heading">
           <img class="pc-heading-icon" src="./image/icom64.png" alt="" aria-hidden="true">
-          <h1>Why-Why Sheet</h1>
+          <h1>Why-Why Sheet　<span class="app-title-suffix">for PC</span></h1>
         </div>
         <div class="pc-toolbar" aria-label="\u30d5\u30a1\u30a4\u30eb\u64cd\u4f5c">
-          <button class="action-button" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
+          <button class="action-button action-button-blink" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
           <button class="action-button" type="button" data-action="save">json\u4fdd\u5b58</button>
           <button class="action-button" type="button" data-action="pdf">PDF\u51fa\u529b</button>
         </div>
@@ -181,7 +181,9 @@ export function createPcApp(rootElement) {
     }
   });
 
-  rootElement.querySelector('[data-action="load"]').addEventListener("click", async () => {
+  rootElement.querySelector('[data-action="load"]').addEventListener("click", async (event) => {
+    event.currentTarget.classList.remove("action-button-blink");
+    interaction.stopLoadAndProblemAnimations();
     setLoadMode(true);
     try {
       const selectedFile = await promptJsonFile();

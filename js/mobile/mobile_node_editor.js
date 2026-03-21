@@ -26,6 +26,8 @@ export function renderMobileNodeEditor(
     nodeId,
     onLoad,
     onSave,
+    shouldAnimateProblemNode,
+    onProblemInput,
     onBack,
     onCreateNext,
     onCreateBranch,
@@ -47,7 +49,7 @@ export function renderMobileNodeEditor(
   const gradientStep = getGradientStep(node);
   const { baseLabel, branchSuffix } = treeModel.getDisplayLabelParts(node.id);
   const displayText = treeModel.getEditableText(node.id);
-  const placeholderText = `${baseLabel}${branchSuffix}`;
+  const placeholderText = "テキスト";
   const branchHint = canCreateBranch
     ? ""
     : node.type !== "why"
@@ -60,16 +62,15 @@ export function renderMobileNodeEditor(
         <div class="mobile-editor-heading">
           <img class="mobile-title-icon" src="./image/icom64.png" alt="" aria-hidden="true">
           <div class="mobile-editor-title-wrap">
-            <h1>Why-Why Sheet Light</h1>
+            <h1>Why-Why Sheet　<span class="app-title-suffix">for SP</span></h1>
           </div>
         </div>
         <div class="mobile-toolbar">
           <button class="action-button action-button-accent" type="button" data-action="back">\u30e1\u30a4\u30f3\u3078</button>
         </div>
       </header>
-      <section class="mobile-editor-card" data-type="${node.type}">
+      <section class="mobile-editor-card${node.type === "problem" && !shouldAnimateProblemNode?.(node.id) ? " mobile-problem-animation-stopped" : ""}" data-type="${node.type}">
         <div class="mobile-editor-label-row">
-          <label class="mobile-editor-label" for="mobile-node-text">\u5185\u5bb9</label>
           <div class="mobile-editor-label-meta">${escapeHtml(baseLabel)}<span class="mobile-editor-label-suffix">${escapeHtml(branchSuffix)}</span></div>
         </div>
         <textarea id="mobile-node-text" class="mobile-editor-textarea" rows="1" placeholder="${escapeHtml(placeholderText)}">${escapeHtml(displayText)}</textarea>
@@ -112,6 +113,10 @@ export function renderMobileNodeEditor(
 
   textarea.addEventListener("input", (event) => {
     treeModel.updateNodeText(node.id, event.currentTarget.value);
+    if (node.type === "problem") {
+      rootElement.querySelector(".mobile-editor-card")?.classList.add("mobile-problem-animation-stopped");
+      onProblemInput?.(node.id);
+    }
     autosizeTextarea();
   });
 

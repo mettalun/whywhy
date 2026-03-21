@@ -9,6 +9,22 @@ export function createMobileApp(rootElement) {
   const treeModel = new TreeModel();
   let selectedNodeId = treeModel.rootId;
   let activeScreen = "map";
+  let loadButtonAnimationStopped = false;
+  const stoppedProblemAnimationNodeIds = new Set();
+
+  function stopLoadAndProblemAnimations(nodeId = null) {
+    loadButtonAnimationStopped = true;
+    if (nodeId) {
+      stoppedProblemAnimationNodeIds.add(nodeId);
+      return;
+    }
+
+    for (const node of treeModel.getNodes()) {
+      if (node.type === "problem") {
+        stoppedProblemAnimationNodeIds.add(node.id);
+      }
+    }
+  }
 
   function syncLayoutToModel() {
     const layout = layoutTree(treeModel.getNodes(), treeModel.rootId);
@@ -16,7 +32,9 @@ export function createMobileApp(rootElement) {
     return layout;
   }
 
-  async function handleLoad() {
+  async function handleLoad(event) {
+    event?.currentTarget?.classList?.remove("action-button-blink");
+    stopLoadAndProblemAnimations();
     try {
       const selectedFile = await promptJsonFile();
       if (!selectedFile) {
@@ -45,6 +63,8 @@ export function createMobileApp(rootElement) {
         layout: currentLayout,
         onLoad: handleLoad,
         onSave: handleSave,
+        shouldAnimateLoadButton: !loadButtonAnimationStopped,
+        shouldAnimateProblemNode: (nodeId) => !stoppedProblemAnimationNodeIds.has(nodeId),
         onNodeSelect: (nodeId) => {
           selectedNodeId = nodeId;
           activeScreen = "editor";
@@ -81,6 +101,10 @@ export function createMobileApp(rootElement) {
       nodeId: selectedNodeId,
       onLoad: handleLoad,
       onSave: handleSave,
+      shouldAnimateProblemNode: (currentNodeId) => !stoppedProblemAnimationNodeIds.has(currentNodeId),
+      onProblemInput: (nodeId) => {
+        stopLoadAndProblemAnimations(nodeId);
+      },
       onBack: () => {
         activeScreen = "map";
         render();

@@ -16,14 +16,19 @@ export class PcEditor {
     this.onDeleteRequest = null;
     this.onFinalizeRequest = null;
     this.onNodeLayoutChange = null;
+    this.onProblemInput = null;
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
     this.handleFinalizeClick = this.handleFinalizeClick.bind(this);
     this.handleBranchButtonClick = this.handleBranchButtonClick.bind(this);
     this.onBranchCreate = null;
     this.onSiblingBranchCreate = null;
+    this.onNodeEditStart = null;
+    this.shouldAnimateProblemNode = null;
+    this.shouldAnimateLoadButton = null;
   }
 
   autosizeTextarea(textarea) {
@@ -46,18 +51,24 @@ export class PcEditor {
     onNodeSubmit,
     onNodeBlur,
     onNodeLayoutChange,
+    onProblemInput,
     onBranchCreate,
     onSiblingBranchCreate,
     onDeleteRequest,
-    onFinalizeRequest
+    onFinalizeRequest,
+    shouldAnimateProblemNode,
+    shouldAnimateLoadButton
   }) {
     this.onNodeSubmit = onNodeSubmit;
     this.onNodeBlur = onNodeBlur;
     this.onNodeLayoutChange = onNodeLayoutChange;
+    this.onProblemInput = onProblemInput;
     this.onDeleteRequest = onDeleteRequest;
     this.onFinalizeRequest = onFinalizeRequest;
     this.onBranchCreate = onBranchCreate;
     this.onSiblingBranchCreate = onSiblingBranchCreate;
+    this.shouldAnimateProblemNode = shouldAnimateProblemNode;
+    this.shouldAnimateLoadButton = shouldAnimateLoadButton;
 
     const { nodes, metrics } = layoutTree(this.treeModel.getNodes(), this.treeModel.rootId);
     this.treeModel.applyNodePositions(nodes);
@@ -79,6 +90,9 @@ export class PcEditor {
       const card = document.createElement("div");
       card.className = "why-node-card";
       card.dataset.type = node.type;
+      if (node.type === "problem" && !this.shouldAnimateProblemNode?.(node.id)) {
+        card.classList.add("why-node-card-animation-stopped");
+      }
       card.style.left = `${node.x}px`;
       card.style.top = `${node.y}px`;
 
@@ -108,6 +122,7 @@ export class PcEditor {
       textarea.addEventListener("keydown", this.handleKeyDown);
       textarea.addEventListener("input", this.handleInput);
       textarea.addEventListener("blur", this.handleBlur);
+      textarea.addEventListener("focus", this.handleFocus);
       contentArea.appendChild(textarea);
       card.appendChild(contentArea);
       if (this.treeModel.isTerminalNode(node.id) && node.id !== this.treeModel.rootId) {
@@ -213,6 +228,14 @@ export class PcEditor {
   handleInput(event) {
     const textarea = event.currentTarget;
     const nodeId = textarea.dataset.nodeId;
+    if (textarea.dataset.type === "problem") {
+      textarea.closest(".why-node-card")?.classList.add("why-node-card-animation-stopped");
+      this.onProblemInput?.(nodeId);
+      const loadButton = document.querySelector('[data-action="load"].action-button-blink');
+      if (loadButton && this.shouldAnimateLoadButton?.()) {
+        loadButton.classList.remove("action-button-blink");
+      }
+    }
     this.treeModel.updateNodeText(nodeId, textarea.value);
     this.autosizeTextarea(textarea);
     const layoutChanged = this.syncMeasuredHeight(textarea);
@@ -229,6 +252,14 @@ export class PcEditor {
     const nodeId = event.currentTarget.dataset.nodeId;
     if (this.onNodeBlur) {
       this.onNodeBlur(nodeId);
+    }
+  }
+
+  handleFocus(event) {
+    const textarea = event.currentTarget;
+    const nodeType = textarea.dataset.type;
+    if (nodeType !== "problem") {
+      return;
     }
   }
 

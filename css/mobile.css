@@ -89,6 +89,10 @@ body[data-device="mobile"] .mobile-flow {
   overflow-wrap: anywhere;
 }
 
+.app-title-suffix {
+  font-size: 0.72em;
+}
+
 .mobile-eyebrow {
   margin: 0 0 4px;
   font-size: 0.82rem;
@@ -155,6 +159,11 @@ body[data-device="mobile"] .mobile-flow {
 
 .mobile-map-node[data-type="problem"] {
   background: var(--problem);
+  animation: mobile-problem-blink 3s ease-in-out infinite;
+}
+
+.mobile-map-node[data-type="problem"].mobile-problem-animation-stopped {
+  animation: none;
 }
 
 .mobile-map-node[data-type="why"] {
@@ -169,6 +178,27 @@ body[data-device="mobile"] .mobile-flow {
   margin: 14px 2px 0;
   color: #6c5b50;
   line-height: 1.6;
+}
+
+@keyframes mobile-problem-blink {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+    box-shadow: none;
+  }
+
+  50% {
+    opacity: 0.58;
+    filter: brightness(1.04);
+    box-shadow: 0 6px 14px rgba(96, 76, 60, 0.16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-map-node[data-type="problem"] {
+    animation: none;
+  }
 }
 
 .mobile-hint-warning {
@@ -287,6 +317,10 @@ body[data-device="mobile"] .mobile-flow {
 
 .mobile-editor-card[data-type="problem"] {
   background: linear-gradient(180deg, rgba(246, 199, 212, 0.44), rgba(255, 255, 255, 0.9));
+}
+
+.mobile-editor-card[data-type="problem"].mobile-problem-animation-stopped {
+  animation: none;
 }
 
 .mobile-editor-card[data-type="why"] {

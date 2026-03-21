@@ -184,9 +184,39 @@ body.print-mode #print-root {
   box-shadow: 0 8px 20px rgba(96, 76, 60, 0.08);
 }
 
+.action-button-blink {
+  animation: action-button-blink 5s ease-in-out infinite;
+}
+
+.action-button-blink:hover,
+.action-button-blink:focus-visible {
+  animation-play-state: paused;
+}
+
 .action-button:disabled {
   opacity: 0.8;
   cursor: not-allowed;
+}
+
+@keyframes action-button-blink {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+    box-shadow: 0 8px 20px rgba(96, 76, 60, 0.08);
+  }
+
+  50% {
+    opacity: 0.45;
+    filter: brightness(1.08);
+    box-shadow: 0 10px 24px rgba(96, 76, 60, 0.14);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action-button-blink {
+    animation: none;
+  }
 }
 
 .sr-only {

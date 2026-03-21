@@ -15,7 +15,7 @@ function getMobileNodeText(node) {
 
 export function renderMobileMapView(
   rootElement,
-  { layout, onLoad, onSave, onNodeSelect, onBranchAction, canBranchFromNode }
+  { layout, onLoad, onSave, onNodeSelect, onBranchAction, canBranchFromNode, shouldAnimateLoadButton, shouldAnimateProblemNode }
 ) {
   const { nodes, metrics } = layout;
   const scale = 0.34;
@@ -27,10 +27,10 @@ export function renderMobileMapView(
       <header class="mobile-header">
         <div class="mobile-title-group">
           <img class="mobile-title-icon" src="./image/icom64.png" alt="" aria-hidden="true">
-          <h1>Why-Why Sheet Light</h1>
+          <h1>Why-Why Sheet　<span class="app-title-suffix">for SP</span></h1>
         </div>
         <div class="mobile-toolbar">
-          <button class="action-button" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
+          <button class="action-button${shouldAnimateLoadButton ? " action-button-blink" : ""}" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
           <button class="action-button" type="button" data-action="save">\u4fdd\u5b58</button>
         </div>
       </header>
@@ -41,8 +41,9 @@ export function renderMobileMapView(
             <div class="mobile-map-nodes"></div>
           </div>
         </div>
-        <p class="mobile-hint">\u30ce\u30fc\u30c9\u3092\u30bf\u30c3\u30d7\u3057\u3066\u7de8\u96c6\u3002</p>
-        <p class="mobile-hint mobile-hint-warning">PDF\u5370\u5237\u306f\u3067\u304d\u307e\u305b\u3093\u3002</p>
+        <p class="mobile-hint">WhyWhy Sheetは、なぜなぜ分析をブラウザで無料作成できる原因分析ツールです。</p>
+        <p class="mobile-hint">ドラッグ操作で5Whyを整理、紙より速く書き直しゼロ。</p>
+        <p class="mobile-hint mobile-hint-warning">PC・スマホ対応、インストール不要、for PCは PDF出力対応。</p>
       </section>
     </main>
   `;
@@ -67,6 +68,9 @@ export function renderMobileMapView(
     nodeButton.className = "mobile-map-node";
     nodeButton.type = "button";
     nodeButton.dataset.type = node.type;
+    if (node.type === "problem" && !shouldAnimateProblemNode?.(node.id)) {
+      nodeButton.classList.add("mobile-problem-animation-stopped");
+    }
     nodeButton.style.left = `${node.x * scale}px`;
     nodeButton.style.top = `${node.y * scale}px`;
     nodeButton.style.width = `${metrics.nodeWidth * scale}px`;
