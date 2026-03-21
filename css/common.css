@@ -133,13 +133,26 @@ body.print-mode #print-root {
   padding: 8px 12px 10px;
   line-height: 1.35;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
+  gap: 4px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
   break-inside: avoid;
   page-break-inside: avoid;
   box-shadow: none;
+}
+
+.print-node-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #5a4a41;
+}
+
+.print-node-body {
+  width: 100%;
+  min-height: 1em;
 }
 
 .print-row {

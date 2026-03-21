@@ -48,6 +48,18 @@ function getNodeBackground(node) {
   return WHY_LEVEL_COLORS[node.level] ?? WHY_LEVEL_COLORS[5];
 }
 
+function buildPrintNodeInnerMarkup(node) {
+  const labelMarkup = node.displayLabel
+    ? `<div class="print-node-label">${escapeHtml(node.displayLabel)}</div>`
+    : "";
+  const textMarkup = escapeHtml(node.printText ?? "").replaceAll("\n", "<br>");
+
+  return `
+    ${labelMarkup}
+    <div class="print-node-body">${textMarkup}</div>
+  `;
+}
+
 function buildConnections(nodes) {
   const nodeMap = new Map(nodes.map((node) => [node.id, node]));
   const connections = [];
@@ -111,7 +123,7 @@ function buildMeasurementNodeMarkup(nodes, metrics) {
             background:${getNodeBackground(node)};
           "
         >
-          ${escapeHtml(node.text).replaceAll("\n", "<br>")}
+          ${buildPrintNodeInnerMarkup(node)}
         </div>
       `;
     })
@@ -489,7 +501,7 @@ function buildPageNodes(page, metrics) {
             background:${getNodeBackground(node)};
           "
         >
-          ${escapeHtml(node.text).replaceAll("\n", "<br>")}
+          ${buildPrintNodeInnerMarkup(node)}
         </div>
       `;
     })
@@ -629,7 +641,7 @@ function removeEmptyRenderedPages(printRoot) {
 }
 
 export function exportTreeToPdf(treeModel, options = {}) {
-  const { title = "Why-Why Analysis Sheet" } = options;
+  const { title = "Why-Why Sheet" } = options;
   const printRoot = document.getElementById("print-root");
 
   if (!printRoot) {
@@ -641,7 +653,12 @@ export function exportTreeToPdf(treeModel, options = {}) {
   const previousTitle = document.title;
 
   try {
-    const layout = layoutTree(treeModel.getNodes(), treeModel.rootId);
+    const exportNodes = treeModel.getNodes().map((node) => ({
+      ...node,
+      displayLabel: treeModel.getDisplayLabel(node.id),
+      printText: treeModel.getEditableText(node.id)
+    }));
+    const layout = layoutTree(exportNodes, treeModel.rootId);
     treeModel.applyNodePositions(layout.nodes);
     const printableMarkup = buildPrintableMarkup(layout, title);
 

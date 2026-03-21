@@ -174,7 +174,7 @@ export function createPcApp(rootElement) {
     try {
       syncLayoutToModel();
       exportTreeToPdf(treeModel, {
-        title: "Why-Why Analysis Sheet"
+        title: "Why-Why Sheet"
       });
     } catch (error) {
       window.alert(error.message);
