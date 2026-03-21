@@ -26,7 +26,6 @@ export function renderMobileNodeEditor(
     nodeId,
     onLoad,
     onSave,
-    onPdf,
     onBack,
     onCreateNext,
     onCreateBranch,
@@ -59,15 +58,14 @@ export function renderMobileNodeEditor(
     <main class="app-shell mobile-flow mobile-editor-screen" data-gradient-step="${gradientStep}">
       <header class="mobile-header mobile-editor-header">
         <div class="mobile-editor-heading">
-          <button class="action-button" type="button" data-action="back">\u30e1\u30a4\u30f3\u3078</button>
           <div class="mobile-editor-title-wrap">
-            <h1>Why-Why Sheet</h1>
+            <h1>Why-Why Sheet Light</h1>
           </div>
         </div>
         <div class="mobile-toolbar">
           <button class="action-button" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
           <button class="action-button" type="button" data-action="save">\u4fdd\u5b58</button>
-          <button class="action-button" type="button" data-action="pdf">PDF</button>
+          <button class="action-button action-button-accent" type="button" data-action="back">\u30e1\u30a4\u30f3\u3078</button>
         </div>
       </header>
       <section class="mobile-editor-card" data-type="${node.type}">
@@ -84,6 +82,7 @@ export function renderMobileNodeEditor(
         </div>
         ${branchHint ? `<p class="mobile-inline-hint">${escapeHtml(branchHint)}</p>` : ""}
         <p class="mobile-hint">Enter\u76f8\u5f53\u306e\u64cd\u4f5c\u306f\u300c\u6b21\u3092\u8ffd\u52a0\u300d\u3067\u3059\u3002Why5\u306e\u6b21\u306f\u81ea\u52d5\u3067\u5bfe\u7b56\u306b\u306a\u308a\u307e\u3059\u3002</p>
+        <p class="mobile-hint mobile-hint-warning">PDF\u5370\u5237\u306f\u3067\u304d\u307e\u305b\u3093\u3002</p>
       </section>
     </main>
   `;
@@ -92,14 +91,29 @@ export function renderMobileNodeEditor(
   const backButton = rootElement.querySelector('[data-action="back"]');
   const titleWrap = rootElement.querySelector(".mobile-editor-title-wrap");
 
+  const autosizeTextarea = () => {
+    textarea.style.height = "auto";
+    const computedStyle = window.getComputedStyle(textarea);
+    const lineHeight = Number.parseFloat(computedStyle.lineHeight) || 24;
+    const paddingTop = Number.parseFloat(computedStyle.paddingTop) || 0;
+    const paddingBottom = Number.parseFloat(computedStyle.paddingBottom) || 0;
+    const borderTop = Number.parseFloat(computedStyle.borderTopWidth) || 0;
+    const borderBottom = Number.parseFloat(computedStyle.borderBottomWidth) || 0;
+    const maxHeight = (lineHeight * 4) + paddingTop + paddingBottom + borderTop + borderBottom;
+    const nextHeight = Math.min(textarea.scrollHeight, maxHeight);
+    textarea.style.height = `${Math.max(nextHeight, lineHeight + paddingTop + paddingBottom + borderTop + borderBottom)}px`;
+    textarea.style.overflowY = textarea.scrollHeight > maxHeight ? "auto" : "hidden";
+  };
+
   const syncEditorTitleOffset = () => {
-    const backButtonWidth = backButton.getBoundingClientRect().width;
-    const titleShift = Math.max(10, Math.round(backButtonWidth * 0.12));
+    const toolbarWidth = rootElement.querySelector(".mobile-toolbar")?.getBoundingClientRect().width ?? 0;
+    const titleShift = toolbarWidth > 0 ? Math.max(8, Math.round(toolbarWidth * 0.02)) : 0;
     titleWrap.style.setProperty("--mobile-editor-title-shift", `${titleShift}px`);
   };
 
   textarea.addEventListener("input", (event) => {
     treeModel.updateNodeText(node.id, event.currentTarget.value);
+    autosizeTextarea();
   });
 
   const handleHeaderResize = () => syncEditorTitleOffset();
@@ -113,13 +127,13 @@ export function renderMobileNodeEditor(
   };
 
   syncEditorTitleOffset();
+  autosizeTextarea();
   textarea.focus();
   textarea.setSelectionRange(textarea.value.length, textarea.value.length);
 
   rootElement.querySelector('[data-action="back"]').addEventListener("click", onBack);
   rootElement.querySelector('[data-action="load"]').addEventListener("click", onLoad);
   rootElement.querySelector('[data-action="save"]').addEventListener("click", onSave);
-  rootElement.querySelector('[data-action="pdf"]').addEventListener("click", onPdf);
   rootElement.querySelector('[data-action="next"]').addEventListener("click", onCreateNext);
   rootElement.querySelector('[data-action="branch"]').addEventListener("click", onCreateBranch);
   rootElement.querySelector('[data-action="finalize"]').addEventListener("click", onFinalizeCountermeasure);

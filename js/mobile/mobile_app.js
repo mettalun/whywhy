@@ -1,7 +1,6 @@
 import { TreeModel } from "../core/tree_model.js";
 import { downloadJsonFile, parseJsonFileContent, promptJsonFile } from "../core/file_io.js";
 import { layoutTree } from "../core/layout_engine.js";
-import { exportTreeToPdf } from "../core/pdf_exporter.js";
 import { renderMobileMapView } from "./mobile_map_view.js";
 import { renderMobileNodeEditor } from "./mobile_node_editor.js";
 import { createMobileBranchMenu } from "./mobile_branch_menu.js";
@@ -39,17 +38,6 @@ export function createMobileApp(rootElement) {
     downloadJsonFile(treeModel.serialize());
   }
 
-  function handlePdf() {
-    try {
-      syncLayoutToModel();
-      exportTreeToPdf(treeModel, {
-        title: "Why-Why Analysis Sheet"
-      });
-    } catch (error) {
-      window.alert(error.message);
-    }
-  }
-
   function render() {
     if (activeScreen === "map") {
       const currentLayout = syncLayoutToModel();
@@ -57,7 +45,6 @@ export function createMobileApp(rootElement) {
         layout: currentLayout,
         onLoad: handleLoad,
         onSave: handleSave,
-        onPdf: handlePdf,
         onNodeSelect: (nodeId) => {
           selectedNodeId = nodeId;
           activeScreen = "editor";
@@ -94,7 +81,6 @@ export function createMobileApp(rootElement) {
       nodeId: selectedNodeId,
       onLoad: handleLoad,
       onSave: handleSave,
-      onPdf: handlePdf,
       onBack: () => {
         activeScreen = "map";
         render();

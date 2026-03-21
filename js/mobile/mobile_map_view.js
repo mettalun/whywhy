@@ -15,7 +15,7 @@ function getMobileNodeText(node) {
 
 export function renderMobileMapView(
   rootElement,
-  { layout, onLoad, onSave, onPdf, onNodeSelect, onBranchAction, canBranchFromNode }
+  { layout, onLoad, onSave, onNodeSelect, onBranchAction, canBranchFromNode }
 ) {
   const { nodes, metrics } = layout;
   const scale = 0.34;
@@ -27,12 +27,11 @@ export function renderMobileMapView(
       <header class="mobile-header">
         <div class="mobile-title-group">
           <img class="mobile-title-icon" src="./image/icom64.png" alt="" aria-hidden="true">
-          <h1>Why-Why Sheet</h1>
+          <h1>Why-Why Sheet Light</h1>
         </div>
         <div class="mobile-toolbar">
           <button class="action-button" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
           <button class="action-button" type="button" data-action="save">\u4fdd\u5b58</button>
-          <button class="action-button" type="button" data-action="pdf">PDF</button>
         </div>
       </header>
       <section class="mobile-map-panel">
@@ -43,6 +42,7 @@ export function renderMobileMapView(
           </div>
         </div>
         <p class="mobile-hint">\u30ce\u30fc\u30c9\u3092\u30bf\u30c3\u30d7\u3057\u3066\u7de8\u96c6\u3002</p>
+        <p class="mobile-hint mobile-hint-warning">PDF\u5370\u5237\u306f\u3067\u304d\u307e\u305b\u3093\u3002</p>
       </section>
     </main>
   `;
@@ -52,7 +52,6 @@ export function renderMobileMapView(
   const nodeLayer = rootElement.querySelector(".mobile-map-nodes");
   rootElement.querySelector('[data-action="load"]').addEventListener("click", onLoad);
   rootElement.querySelector('[data-action="save"]').addEventListener("click", onSave);
-  rootElement.querySelector('[data-action="pdf"]').addEventListener("click", onPdf);
 
   preview.style.setProperty("--map-scale", scale);
   renderConnections(lineLayer, nodes, metrics, {
