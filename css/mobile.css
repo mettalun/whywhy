@@ -110,6 +110,11 @@ body[data-device="mobile"] .mobile-flow {
   padding: 18px;
 }
 
+.mobile-map-screen .mobile-toolbar {
+  margin-left: 0;
+  margin-right: auto;
+}
+
 .mobile-map-stage {
   overflow: auto;
   border-radius: 20px;

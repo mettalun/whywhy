@@ -11,7 +11,7 @@ export function createPcApp(rootElement) {
       <header class="pc-topbar">
         <div class="pc-heading">
           <img class="pc-heading-icon" src="./image/icom64.png" alt="" aria-hidden="true">
-          <h1>Why-Why Sheet Light</h1>
+          <h1>Why-Why Sheet</h1>
         </div>
         <div class="pc-toolbar" aria-label="\u30d5\u30a1\u30a4\u30eb\u64cd\u4f5c">
           <button class="action-button" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>

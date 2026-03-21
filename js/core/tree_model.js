@@ -233,12 +233,18 @@ export class TreeModel {
   updateNodeMeasuredHeight(nodeId, measuredHeight) {
     const targetNode = this.getNodeById(nodeId);
     if (!targetNode) {
-      return;
+      return false;
     }
 
     if (typeof measuredHeight === "number" && Number.isFinite(measuredHeight) && measuredHeight > 0) {
+      if (targetNode.measuredHeight === measuredHeight) {
+        return false;
+      }
       targetNode.measuredHeight = measuredHeight;
+      return true;
     }
+
+    return false;
   }
 
   getNextDefinition(sourceNode) {

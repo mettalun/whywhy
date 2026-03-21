@@ -5,13 +5,19 @@ export class PcInteraction {
     this.confirmation = confirmation;
     this.skipBlurNodeId = null;
     this.blurRenderHandle = null;
+    this.inputRenderHandle = null;
+    this.pendingInputFocus = null;
   }
 
-  render(focusNodeId = null) {
+  render(focusNodeId = null, focusSelectionStart = null, focusSelectionEnd = null) {
     this.editor.render({
       focusNodeId,
+      focusSelectionStart,
+      focusSelectionEnd,
       onNodeSubmit: (nodeId) => this.handleNodeSubmit(nodeId),
       onNodeBlur: (nodeId) => this.handleNodeBlur(nodeId),
+      onNodeLayoutChange: ({ nodeId, selectionStart, selectionEnd }) =>
+        this.handleNodeLayoutChange(nodeId, selectionStart, selectionEnd),
       onBranchCreate: (nodeId) => this.handleBranchCreate(nodeId),
       onSiblingBranchCreate: (nodeId) => this.handleSiblingBranchCreate(nodeId),
       onDeleteRequest: (nodeId) => this.handleDeleteRequest(nodeId),
@@ -50,6 +56,23 @@ export class PcInteraction {
       }
       this.render(nodeId);
     }, 0);
+  }
+
+  handleNodeLayoutChange(nodeId, selectionStart, selectionEnd) {
+    this.pendingInputFocus = { nodeId, selectionStart, selectionEnd };
+    if (this.inputRenderHandle) {
+      return;
+    }
+
+    this.inputRenderHandle = window.requestAnimationFrame(() => {
+      this.inputRenderHandle = null;
+      const focus = this.pendingInputFocus;
+      this.pendingInputFocus = null;
+      if (!focus) {
+        return;
+      }
+      this.render(focus.nodeId, focus.selectionStart, focus.selectionEnd);
+    });
   }
 
   handleBranchCreate(nodeId) {

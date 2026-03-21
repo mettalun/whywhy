@@ -15,6 +15,7 @@ export class PcEditor {
     this.onNodeBlur = null;
     this.onDeleteRequest = null;
     this.onFinalizeRequest = null;
+    this.onNodeLayoutChange = null;
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
@@ -35,13 +36,16 @@ export class PcEditor {
     const nodeId = textarea.dataset.nodeId;
     const card = textarea.closest(".why-node-card");
     const measuredHeight = card ? Math.ceil(card.getBoundingClientRect().height) : textarea.scrollHeight;
-    this.treeModel.updateNodeMeasuredHeight(nodeId, measuredHeight);
+    return this.treeModel.updateNodeMeasuredHeight(nodeId, measuredHeight);
   }
 
   render({
     focusNodeId = null,
+    focusSelectionStart = null,
+    focusSelectionEnd = null,
     onNodeSubmit,
     onNodeBlur,
+    onNodeLayoutChange,
     onBranchCreate,
     onSiblingBranchCreate,
     onDeleteRequest,
@@ -49,6 +53,7 @@ export class PcEditor {
   }) {
     this.onNodeSubmit = onNodeSubmit;
     this.onNodeBlur = onNodeBlur;
+    this.onNodeLayoutChange = onNodeLayoutChange;
     this.onDeleteRequest = onDeleteRequest;
     this.onFinalizeRequest = onFinalizeRequest;
     this.onBranchCreate = onBranchCreate;
@@ -140,7 +145,9 @@ export class PcEditor {
       const nextField = this.nodeLayerElement.querySelector(`[data-node-id="${focusNodeId}"]`);
       if (nextField) {
         nextField.focus();
-        nextField.setSelectionRange(nextField.value.length, nextField.value.length);
+        const selectionStart = Number.isInteger(focusSelectionStart) ? focusSelectionStart : nextField.value.length;
+        const selectionEnd = Number.isInteger(focusSelectionEnd) ? focusSelectionEnd : selectionStart;
+        nextField.setSelectionRange(selectionStart, selectionEnd);
       }
     }
 
@@ -208,7 +215,14 @@ export class PcEditor {
     const nodeId = textarea.dataset.nodeId;
     this.treeModel.updateNodeText(nodeId, textarea.value);
     this.autosizeTextarea(textarea);
-    this.syncMeasuredHeight(textarea);
+    const layoutChanged = this.syncMeasuredHeight(textarea);
+    if (layoutChanged) {
+      this.onNodeLayoutChange?.({
+        nodeId,
+        selectionStart: textarea.selectionStart,
+        selectionEnd: textarea.selectionEnd
+      });
+    }
   }
 
   handleBlur(event) {

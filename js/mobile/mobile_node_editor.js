@@ -58,13 +58,12 @@ export function renderMobileNodeEditor(
     <main class="app-shell mobile-flow mobile-editor-screen" data-gradient-step="${gradientStep}">
       <header class="mobile-header mobile-editor-header">
         <div class="mobile-editor-heading">
+          <img class="mobile-title-icon" src="./image/icom64.png" alt="" aria-hidden="true">
           <div class="mobile-editor-title-wrap">
             <h1>Why-Why Sheet Light</h1>
           </div>
         </div>
         <div class="mobile-toolbar">
-          <button class="action-button" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
-          <button class="action-button" type="button" data-action="save">\u4fdd\u5b58</button>
           <button class="action-button action-button-accent" type="button" data-action="back">\u30e1\u30a4\u30f3\u3078</button>
         </div>
       </header>
@@ -132,8 +131,6 @@ export function renderMobileNodeEditor(
   textarea.setSelectionRange(textarea.value.length, textarea.value.length);
 
   rootElement.querySelector('[data-action="back"]').addEventListener("click", onBack);
-  rootElement.querySelector('[data-action="load"]').addEventListener("click", onLoad);
-  rootElement.querySelector('[data-action="save"]').addEventListener("click", onSave);
   rootElement.querySelector('[data-action="next"]').addEventListener("click", onCreateNext);
   rootElement.querySelector('[data-action="branch"]').addEventListener("click", onCreateBranch);
   rootElement.querySelector('[data-action="finalize"]').addEventListener("click", onFinalizeCountermeasure);
