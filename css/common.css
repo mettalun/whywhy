@@ -1,0 +1,282 @@
+:root {
+  --bg: #fffaf5;
+  --surface: rgba(255, 255, 255, 0.9);
+  --text: #2f2b2b;
+  --border: #c9bdb7;
+  --shadow: 0 16px 40px rgba(96, 76, 60, 0.12);
+  --problem: #f6c7d4;
+  --why: #fff2cf;
+  --countermeasure: #cfe7ff;
+  --button: #f3ede6;
+  --button-text: #4c3f39;
+  --canvas-grid: rgba(120, 102, 89, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Yu Gothic UI", "Hiragino Kaku Gothic ProN", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(246, 199, 212, 0.55), transparent 28%),
+    linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+  color: var(--text);
+}
+
+body {
+  min-height: 100vh;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+#print-root {
+  display: none;
+  background: white;
+  color: var(--text);
+}
+
+body.print-mode #print-root {
+  display: block;
+}
+
+.print-sheet {
+  padding: 0;
+  margin: 0;
+}
+
+.print-page {
+  position: relative;
+  width: 100%;
+  break-after: page;
+  page-break-after: always;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+}
+
+.print-page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.print-title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.print-header {
+  width: 100%;
+}
+
+.print-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  min-height: 40px;
+  margin: 0 0 16px;
+}
+
+.print-page-number {
+  margin: 0;
+  font-size: 14px;
+  color: #6c5b50;
+}
+
+.print-page-inner {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  overflow: visible;
+}
+
+.print-scene {
+  position: relative;
+  overflow: hidden;
+  max-width: none;
+}
+
+.print-page-zoom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+}
+
+.print-stage {
+  position: relative;
+}
+
+.print-svg {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.print-node {
+  position: absolute;
+  border: 1px solid rgba(88, 71, 60, 0.24);
+  border-radius: 20px;
+  padding: 8px 12px 10px;
+  line-height: 1.35;
+  display: flex;
+  align-items: flex-start;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  box-shadow: none;
+}
+
+.print-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  pointer-events: none;
+}
+
+.print-page-nodes {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.node-box {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.action-button {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--button);
+  color: var(--button-text);
+  padding: 0.7rem 1.1rem;
+  box-shadow: 0 8px 20px rgba(96, 76, 60, 0.08);
+}
+
+.action-button:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media print {
+  @page {
+    size: 420mm 297mm;
+    margin: 4mm;
+  }
+
+  html,
+  body {
+    background: white !important;
+  }
+
+  body.print-mode > :not(#print-root) {
+    display: none !important;
+  }
+
+  #print-root,
+  #print-root * {
+    visibility: visible;
+  }
+
+  #print-root {
+    display: block !important;
+    position: static;
+    width: 100%;
+    padding: 0;
+    background: white;
+    overflow: visible;
+  }
+
+  .print-sheet {
+    display: block;
+    overflow: visible;
+  }
+
+  .print-row,
+  .print-node,
+  .node-box {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-page-canvas {
+    position: relative;
+    overflow: hidden;
+    max-width: none;
+  }
+
+  .print-page-zoom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+  }
+
+  .print-page-lines {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .print-page,
+  .print-page-inner,
+  .print-scene,
+  .print-stage,
+  .print-node,
+  .print-svg,
+  .print-title,
+  .print-page-header,
+  .print-page-number,
+  .print-row,
+  .node-box {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-page {
+    width: calc(420mm - 8mm);
+    min-height: calc(297mm - 8mm);
+    break-after: page;
+    page-break-after: always;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    overflow: hidden;
+  }
+
+  .print-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}
