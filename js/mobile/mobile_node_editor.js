@@ -62,7 +62,7 @@ export function renderMobileNodeEditor(
         <div class="mobile-editor-heading">
           <img class="mobile-title-icon" src="./image/icom64.png" alt="" aria-hidden="true">
           <div class="mobile-editor-title-wrap">
-            <h1>Why-Why Sheet　<span class="app-title-suffix">for SP</span></h1>
+            <h1>WhyWhy Sheet　<span class="app-title-suffix">for SP</span></h1>
           </div>
         </div>
         <div class="mobile-toolbar">

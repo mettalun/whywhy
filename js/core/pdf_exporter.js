@@ -641,7 +641,7 @@ function removeEmptyRenderedPages(printRoot) {
 }
 
 export function exportTreeToPdf(treeModel, options = {}) {
-  const { title = "Why-Why Sheet" } = options;
+  const { title = "WhyWhy Sheet" } = options;
   const printRoot = document.getElementById("print-root");
 
   if (!printRoot) {

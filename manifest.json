@@ -1,6 +1,6 @@
 {
   "name": "なぜなぜ分析シート",
-  "short_name": "WhyWhy",
+  "short_name": "WhyWhy Sheet",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fffaf5",

@@ -27,7 +27,7 @@ export function renderMobileMapView(
       <header class="mobile-header">
         <div class="mobile-title-group">
           <img class="mobile-title-icon" src="./image/icom64.png" alt="" aria-hidden="true">
-          <h1>Why-Why Sheet　<span class="app-title-suffix">for SP</span></h1>
+          <h1>WhyWhy Sheet　<span class="app-title-suffix">for SP</span></h1>
         </div>
         <div class="mobile-toolbar">
           <button class="action-button${shouldAnimateLoadButton ? " action-button-blink" : ""}" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
