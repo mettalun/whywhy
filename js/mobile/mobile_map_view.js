@@ -26,10 +26,35 @@ export function renderMobileMapView(
   { layout, onLoad, onSave, onNodeSelect, onBranchAction, canBranchFromNode, shouldAnimateLoadButton, shouldAnimateProblemNode }
 ) {
   const { nodes, metrics } = layout;
-  const baseScale = 0.34;
+  const viewportWidth = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 320);
+  const viewportHeight = Math.max(480, window.innerHeight || document.documentElement.clientHeight || 480);
+  const horizontalSafeArea =
+    (window.visualViewport ? Math.max(0, viewportWidth - window.visualViewport.width) : 0);
+  const verticalSafeArea =
+    (window.visualViewport ? Math.max(0, viewportHeight - window.visualViewport.height) : 0);
+  const shellPadding = Math.min(24, Math.max(14, viewportWidth * 0.04));
+  const panelPadding = 18;
+  const availableStageWidth = Math.max(
+    220,
+    viewportWidth - shellPadding * 2 - panelPadding * 2 - horizontalSafeArea
+  );
   const previewTopInset = 28;
-  const previewWidth = Math.max(320, Math.round(metrics.width * baseScale));
+  const headerReserveHeight = Math.round(viewportHeight * 0.24);
+  const footerReserveHeight = 56;
+  const availableStageHeight = Math.max(
+    220,
+    viewportHeight - shellPadding * 2 - headerReserveHeight - footerReserveHeight - verticalSafeArea
+  );
+  const widthScale = availableStageWidth / metrics.width;
+  const heightScale = Math.max(0.12, (availableStageHeight - previewTopInset) / metrics.height);
+  const baseScale = Math.min(0.34, widthScale, heightScale);
+  const previewWidth = Math.max(220, Math.round(metrics.width * baseScale));
   const previewHeight = Math.max(240, Math.round(metrics.height * baseScale));
+  const previewFrameHeight = previewHeight + previewTopInset;
+  const stageViewportHeight = Math.min(
+    previewFrameHeight,
+    Math.max(260, Math.round(window.innerHeight * 0.42))
+  );
 
   rootElement.innerHTML = `
     <main class="app-shell mobile-flow mobile-map-screen">
@@ -44,8 +69,8 @@ export function renderMobileMapView(
         </div>
       </header>
       <section class="mobile-map-panel">
-        <div class="mobile-map-stage" style="height:${previewHeight + previewTopInset}px;">
-          <div class="mobile-map-scaler" style="width:${previewWidth}px;height:${previewHeight + previewTopInset}px;">
+        <div class="mobile-map-stage" style="height:${stageViewportHeight}px;">
+          <div class="mobile-map-scaler" style="width:${previewWidth}px;height:${previewFrameHeight}px;">
             <div class="mobile-map-preview" style="width:${previewWidth}px;height:${previewHeight}px; margin-top:${previewTopInset}px;">
               <svg class="mobile-map-lines" aria-hidden="true"></svg>
               <div class="mobile-map-nodes"></div>
@@ -75,7 +100,7 @@ export function renderMobileMapView(
   function applyZoom(nextZoom) {
     zoomScale = clampZoom(nextZoom);
     scaler.style.width = `${previewWidth * zoomScale}px`;
-    scaler.style.height = `${(previewHeight + previewTopInset) * zoomScale}px`;
+    scaler.style.height = `${previewFrameHeight * zoomScale}px`;
     preview.style.transform = `scale(${zoomScale})`;
   }
 

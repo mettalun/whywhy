@@ -114,6 +114,8 @@ body[data-device="mobile"] .mobile-flow {
   padding: 18px;
   min-height: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .mobile-footer-caption {
@@ -144,6 +146,7 @@ body[data-device="mobile"] .mobile-flow {
 }
 
 .mobile-map-stage {
+  min-height: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: 20px;
