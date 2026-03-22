@@ -43,7 +43,7 @@ export function renderMobileNodeEditor(
     return;
   }
 
-  const canCreateNext = Boolean(treeModel.getNextDefinition(node)) && !node.nextId;
+  const canCreateNext = Boolean(treeModel.getNextDefinition(node));
   const canFinalizeCountermeasure = node.type === "why" && treeModel.isTerminalNode(node.id);
   const canCreateBranch = treeModel.canCreateSiblingBranchFromNode(node.id);
   const gradientStep = getGradientStep(node);
