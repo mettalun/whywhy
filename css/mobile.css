@@ -139,8 +139,8 @@ body[data-device="mobile"] .mobile-flow {
   top: max(var(--mobile-shell-padding), env(safe-area-inset-top));
   z-index: 20;
   padding: 10px 0 8px;
-  background: linear-gradient(180deg, rgba(255, 253, 249, 0.98), rgba(255, 253, 249, 0.9));
-  backdrop-filter: blur(6px);
+  background: transparent;
+  backdrop-filter: none;
 }
 
 .mobile-map-stage {
