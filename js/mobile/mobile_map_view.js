@@ -1,5 +1,13 @@
 import { renderConnections } from "../core/renderer_svg.js";
 
+const PROBLEM_LABEL = "\u554f\u984c\u30fb\u73fe\u8c61";
+const LOAD_LABEL = "\u8aad\u307f\u8fbc\u307f";
+const SAVE_LABEL = "\u4fdd\u5b58";
+const FOOTER_CAPTION =
+  "WhyWhy Sheet\u306f\u3001\u306a\u305c\u306a\u305c\u5206\u6790\u3092\u30d6\u30e9\u30a6\u30b6\u3067\u7121\u6599\u4f5c\u6210\u3067\u304d\u308b\u539f\u56e0\u5206\u6790\u30c4\u30fc\u30eb\u3067\u3059\u3002 " +
+  "\u30c9\u30e9\u30c3\u30b0\u64cd\u4f5c\u30675Why\u3092\u6574\u7406\u3001\u7d19\u3088\u308a\u901f\u304f\u66f8\u304d\u76f4\u3057\u30bc\u30ed\u3002 " +
+  "PC\u30fb\u30b9\u30de\u30db\u5bfe\u5fdc\u3001\u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u4e0d\u8981\u3001for PC\u306f PDF\u51fa\u529b\u5bfe\u5fdc\u3002";
+
 function getMobileNodeText(node) {
   const trimmedText = node.text.trim();
   if (trimmedText.length > 0) {
@@ -7,7 +15,7 @@ function getMobileNodeText(node) {
   }
 
   if (node.type === "problem") {
-    return "\u554f\u984c\u30fb\u73fe\u8c61";
+    return PROBLEM_LABEL;
   }
 
   return node.text;
@@ -27,11 +35,11 @@ export function renderMobileMapView(
       <header class="mobile-header">
         <div class="mobile-title-group">
           <img class="mobile-title-icon" src="./image/icom64.png" alt="" aria-hidden="true">
-          <h1>WhyWhy Sheet　<span class="app-title-suffix">for SP</span></h1>
+          <h1>WhyWhy Sheet&#12288;<span class="app-title-suffix">for SP</span></h1>
         </div>
         <div class="mobile-toolbar">
-          <button class="action-button${shouldAnimateLoadButton ? " action-button-blink" : ""}" type="button" data-action="load">\u8aad\u307f\u8fbc\u307f</button>
-          <button class="action-button" type="button" data-action="save">\u4fdd\u5b58</button>
+          <button class="action-button${shouldAnimateLoadButton ? " action-button-blink" : ""}" type="button" data-action="load">${LOAD_LABEL}</button>
+          <button class="action-button" type="button" data-action="save">${SAVE_LABEL}</button>
         </div>
       </header>
       <section class="mobile-map-panel">
@@ -41,10 +49,8 @@ export function renderMobileMapView(
             <div class="mobile-map-nodes"></div>
           </div>
         </div>
-        <p class="mobile-hint">WhyWhy Sheetは、なぜなぜ分析をブラウザで無料作成できる原因分析ツールです。</p>
-        <p class="mobile-hint">ドラッグ操作で5Whyを整理、紙より速く書き直しゼロ。</p>
-        <p class="mobile-hint mobile-hint-warning">PC・スマホ対応、インストール不要、for PCは PDF出力対応。</p>
       </section>
+      <div class="mobile-footer-caption" aria-hidden="true">${FOOTER_CAPTION}</div>
     </main>
   `;
 

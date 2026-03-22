@@ -114,6 +114,14 @@ body[data-device="mobile"] .mobile-flow {
   padding: 18px;
 }
 
+.mobile-footer-caption {
+  margin-top: auto;
+  padding: 0 4px;
+  color: #9a948f;
+  font-size: 0.58rem;
+  line-height: 1.45;
+}
+
 .mobile-map-screen .mobile-toolbar {
   margin-left: 0;
   margin-right: auto;

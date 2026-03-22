@@ -110,6 +110,7 @@ export function createMobileApp(rootElement) {
         render();
       },
       onCreateNext: () => {
+        stopLoadAndProblemAnimations(selectedNodeId);
         const nextNode = treeModel.createNextNode(selectedNodeId);
         if (nextNode) {
           selectedNodeId = nextNode.id;
