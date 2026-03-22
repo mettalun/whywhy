@@ -21,6 +21,12 @@ function getMobileNodeText(node) {
   return node.text;
 }
 
+function getMobileNodeFontSize(nodeWidth, nodeHeight) {
+  const widthBasedSize = nodeWidth * 0.14;
+  const heightBasedSize = nodeHeight * 0.28;
+  return Math.max(9, Math.min(16, widthBasedSize, heightBasedSize));
+}
+
 export function renderMobileMapView(
   rootElement,
   { layout, onLoad, onSave, onNodeSelect, onBranchAction, canBranchFromNode, shouldAnimateLoadButton, shouldAnimateProblemNode }
@@ -195,13 +201,16 @@ export function renderMobileMapView(
     nodeButton.className = "mobile-map-node";
     nodeButton.type = "button";
     nodeButton.dataset.type = node.type;
+    const renderedNodeWidth = metrics.nodeWidth * baseScale;
+    const renderedNodeHeight = metrics.nodeHeight * baseScale;
     if (node.type === "problem" && !shouldAnimateProblemNode?.(node.id)) {
       nodeButton.classList.add("mobile-problem-animation-stopped");
     }
     nodeButton.style.left = `${node.x * baseScale}px`;
     nodeButton.style.top = `${node.y * baseScale}px`;
-    nodeButton.style.width = `${metrics.nodeWidth * baseScale}px`;
-    nodeButton.style.height = `${metrics.nodeHeight * baseScale}px`;
+    nodeButton.style.width = `${renderedNodeWidth}px`;
+    nodeButton.style.height = `${renderedNodeHeight}px`;
+    nodeButton.style.fontSize = `${getMobileNodeFontSize(renderedNodeWidth, renderedNodeHeight)}px`;
     nodeButton.textContent = getMobileNodeText(node);
     nodeButton.addEventListener("click", () => onNodeSelect(node.id));
     nodeLayer.appendChild(nodeButton);
