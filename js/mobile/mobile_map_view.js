@@ -26,9 +26,9 @@ export function renderMobileMapView(
   { layout, onLoad, onSave, onNodeSelect, onBranchAction, canBranchFromNode, shouldAnimateLoadButton, shouldAnimateProblemNode }
 ) {
   const { nodes, metrics } = layout;
-  const scale = 0.34;
-  const previewWidth = Math.max(320, Math.round(metrics.width * scale));
-  const previewHeight = Math.max(240, Math.round(metrics.height * scale));
+  const baseScale = 0.34;
+  const previewWidth = Math.max(320, Math.round(metrics.width * baseScale));
+  const previewHeight = Math.max(240, Math.round(metrics.height * baseScale));
 
   rootElement.innerHTML = `
     <main class="app-shell mobile-flow mobile-map-screen">
@@ -44,9 +44,11 @@ export function renderMobileMapView(
       </header>
       <section class="mobile-map-panel">
         <div class="mobile-map-stage" style="height:${previewHeight}px;">
-          <div class="mobile-map-preview" style="width:${previewWidth}px;height:${previewHeight}px;">
-            <svg class="mobile-map-lines" aria-hidden="true"></svg>
-            <div class="mobile-map-nodes"></div>
+          <div class="mobile-map-scaler" style="width:${previewWidth}px;height:${previewHeight}px;">
+            <div class="mobile-map-preview" style="width:${previewWidth}px;height:${previewHeight}px;">
+              <svg class="mobile-map-lines" aria-hidden="true"></svg>
+              <div class="mobile-map-nodes"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -54,18 +56,109 @@ export function renderMobileMapView(
     </main>
   `;
 
+  const stage = rootElement.querySelector(".mobile-map-stage");
+  const scaler = rootElement.querySelector(".mobile-map-scaler");
   const preview = rootElement.querySelector(".mobile-map-preview");
   const lineLayer = rootElement.querySelector(".mobile-map-lines");
   const nodeLayer = rootElement.querySelector(".mobile-map-nodes");
   rootElement.querySelector('[data-action="load"]').addEventListener("click", onLoad);
   rootElement.querySelector('[data-action="save"]').addEventListener("click", onSave);
 
-  preview.style.setProperty("--map-scale", scale);
+  let zoomScale = 1;
+  let pinchState = null;
+
+  function clampZoom(nextZoom) {
+    return Math.min(3, Math.max(1, nextZoom));
+  }
+
+  function applyZoom(nextZoom) {
+    zoomScale = clampZoom(nextZoom);
+    scaler.style.width = `${previewWidth * zoomScale}px`;
+    scaler.style.height = `${previewHeight * zoomScale}px`;
+    preview.style.transform = `scale(${zoomScale})`;
+  }
+
+  function getTouchDistance(firstTouch, secondTouch) {
+    return Math.hypot(secondTouch.clientX - firstTouch.clientX, secondTouch.clientY - firstTouch.clientY);
+  }
+
+  function getTouchCenter(firstTouch, secondTouch) {
+    return {
+      x: (firstTouch.clientX + secondTouch.clientX) / 2,
+      y: (firstTouch.clientY + secondTouch.clientY) / 2
+    };
+  }
+
+  function startPinch(firstTouch, secondTouch) {
+    const stageBounds = stage.getBoundingClientRect();
+    const center = getTouchCenter(firstTouch, secondTouch);
+    pinchState = {
+      distance: getTouchDistance(firstTouch, secondTouch),
+      zoomScale,
+      anchorX: (stage.scrollLeft + center.x - stageBounds.left) / zoomScale,
+      anchorY: (stage.scrollTop + center.y - stageBounds.top) / zoomScale
+    };
+  }
+
+  function updatePinch(firstTouch, secondTouch) {
+    if (!pinchState) {
+      startPinch(firstTouch, secondTouch);
+      return;
+    }
+
+    const nextDistance = getTouchDistance(firstTouch, secondTouch);
+    if (nextDistance <= 0) {
+      return;
+    }
+
+    const center = getTouchCenter(firstTouch, secondTouch);
+    const stageBounds = stage.getBoundingClientRect();
+    const nextZoom = clampZoom(pinchState.zoomScale * (nextDistance / pinchState.distance));
+    applyZoom(nextZoom);
+    stage.scrollLeft = pinchState.anchorX * nextZoom - (center.x - stageBounds.left);
+    stage.scrollTop = pinchState.anchorY * nextZoom - (center.y - stageBounds.top);
+  }
+
+  stage.addEventListener(
+    "touchstart",
+    (event) => {
+      if (event.touches.length === 2) {
+        startPinch(event.touches[0], event.touches[1]);
+      }
+    },
+    { passive: true }
+  );
+
+  stage.addEventListener(
+    "touchmove",
+    (event) => {
+      if (event.touches.length !== 2) {
+        return;
+      }
+
+      event.preventDefault();
+      updatePinch(event.touches[0], event.touches[1]);
+    },
+    { passive: false }
+  );
+
+  stage.addEventListener("touchend", (event) => {
+    if (event.touches.length < 2) {
+      pinchState = null;
+    }
+  });
+
+  stage.addEventListener("touchcancel", () => {
+    pinchState = null;
+  });
+
+  applyZoom(1);
+
   renderConnections(lineLayer, nodes, metrics, {
     onBranchSlotClick: onBranchAction,
     canBranchFromNode
   });
-  lineLayer.style.transform = `scale(${scale})`;
+  lineLayer.style.transform = `scale(${baseScale})`;
   lineLayer.style.transformOrigin = "top left";
   lineLayer.style.pointerEvents = "all";
 
@@ -77,10 +170,10 @@ export function renderMobileMapView(
     if (node.type === "problem" && !shouldAnimateProblemNode?.(node.id)) {
       nodeButton.classList.add("mobile-problem-animation-stopped");
     }
-    nodeButton.style.left = `${node.x * scale}px`;
-    nodeButton.style.top = `${node.y * scale}px`;
-    nodeButton.style.width = `${metrics.nodeWidth * scale}px`;
-    nodeButton.style.height = `${metrics.nodeHeight * scale}px`;
+    nodeButton.style.left = `${node.x * baseScale}px`;
+    nodeButton.style.top = `${node.y * baseScale}px`;
+    nodeButton.style.width = `${metrics.nodeWidth * baseScale}px`;
+    nodeButton.style.height = `${metrics.nodeHeight * baseScale}px`;
     nodeButton.textContent = getMobileNodeText(node);
     nodeButton.addEventListener("click", () => onNodeSelect(node.id));
     nodeLayer.appendChild(nodeButton);
