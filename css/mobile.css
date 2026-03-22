@@ -111,6 +111,7 @@ body[data-device="mobile"] .mobile-flow {
 }
 
 .mobile-map-panel {
+  margin-top: 10px;
   padding: 18px;
   min-height: 0;
   overflow: hidden;

@@ -22,9 +22,9 @@ function getMobileNodeText(node) {
 }
 
 function getMobileNodeFontSize(nodeWidth, nodeHeight) {
-  const widthBasedSize = nodeWidth * 0.14;
-  const heightBasedSize = nodeHeight * 0.28;
-  return Math.max(9, Math.min(16, widthBasedSize, heightBasedSize));
+  const widthBasedSize = nodeWidth * 0.145;
+  const heightBasedSize = nodeHeight * 0.3;
+  return Math.max(10, Math.min(17, widthBasedSize, heightBasedSize));
 }
 
 export function renderMobileMapView(
@@ -44,7 +44,7 @@ export function renderMobileMapView(
     220,
     viewportWidth - shellPadding * 2 - panelPadding * 2 - horizontalSafeArea
   );
-  const previewTopInset = 28;
+  const previewTopInset = 18;
   const headerReserveHeight = Math.round(viewportHeight * 0.24);
   const footerReserveHeight = 56;
   const availableStageHeight = Math.max(
@@ -53,7 +53,7 @@ export function renderMobileMapView(
   );
   const widthScale = availableStageWidth / metrics.width;
   const heightScale = Math.max(0.12, (availableStageHeight - previewTopInset) / metrics.height);
-  const baseScale = Math.min(0.34, widthScale, heightScale);
+  const baseScale = Math.min(0.38, widthScale, heightScale);
   const previewWidth = Math.max(220, Math.round(metrics.width * baseScale));
   const previewHeight = Math.max(240, Math.round(metrics.height * baseScale));
   const previewFrameHeight = previewHeight + previewTopInset;
