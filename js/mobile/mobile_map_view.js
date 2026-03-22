@@ -28,10 +28,8 @@ export function renderMobileMapView(
   const { nodes, metrics } = layout;
   const baseScale = 0.34;
   const previewTopInset = 28;
-  const previewContentWidth = Math.max(320, Math.round(metrics.width * baseScale));
-  const previewContentHeight = Math.max(240, Math.round(metrics.height * baseScale));
-  const previewWidth = previewContentWidth;
-  const previewHeight = previewContentHeight + previewTopInset;
+  const previewWidth = Math.max(320, Math.round(metrics.width * baseScale));
+  const previewHeight = Math.max(240, Math.round(metrics.height * baseScale));
 
   rootElement.innerHTML = `
     <main class="app-shell mobile-flow mobile-map-screen">
@@ -46,9 +44,9 @@ export function renderMobileMapView(
         </div>
       </header>
       <section class="mobile-map-panel">
-        <div class="mobile-map-stage" style="height:${previewHeight}px;">
-          <div class="mobile-map-scaler" style="width:${previewWidth}px;height:${previewHeight}px;">
-            <div class="mobile-map-preview" style="width:${previewWidth}px;height:${previewHeight}px;">
+        <div class="mobile-map-stage" style="height:${previewHeight + previewTopInset}px;">
+          <div class="mobile-map-scaler" style="width:${previewWidth}px;height:${previewHeight + previewTopInset}px;">
+            <div class="mobile-map-preview" style="width:${previewWidth}px;height:${previewHeight}px; margin-top:${previewTopInset}px;">
               <svg class="mobile-map-lines" aria-hidden="true"></svg>
               <div class="mobile-map-nodes"></div>
             </div>
@@ -77,7 +75,7 @@ export function renderMobileMapView(
   function applyZoom(nextZoom) {
     zoomScale = clampZoom(nextZoom);
     scaler.style.width = `${previewWidth * zoomScale}px`;
-    scaler.style.height = `${previewHeight * zoomScale}px`;
+    scaler.style.height = `${(previewHeight + previewTopInset) * zoomScale}px`;
     preview.style.transform = `scale(${zoomScale})`;
   }
 
@@ -166,9 +164,6 @@ export function renderMobileMapView(
   lineLayer.style.transform = `scale(${baseScale})`;
   lineLayer.style.transformOrigin = "top left";
   lineLayer.style.pointerEvents = "all";
-  lineLayer.style.inset = `${previewTopInset}px auto auto 0`;
-  lineLayer.style.width = `${previewContentWidth}px`;
-  lineLayer.style.height = `${previewContentHeight}px`;
 
   for (const node of nodes) {
     const nodeButton = document.createElement("button");
@@ -179,7 +174,7 @@ export function renderMobileMapView(
       nodeButton.classList.add("mobile-problem-animation-stopped");
     }
     nodeButton.style.left = `${node.x * baseScale}px`;
-    nodeButton.style.top = `${node.y * baseScale + previewTopInset}px`;
+    nodeButton.style.top = `${node.y * baseScale}px`;
     nodeButton.style.width = `${metrics.nodeWidth * baseScale}px`;
     nodeButton.style.height = `${metrics.nodeHeight * baseScale}px`;
     nodeButton.textContent = getMobileNodeText(node);
