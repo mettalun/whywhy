@@ -27,8 +27,11 @@ export function renderMobileMapView(
 ) {
   const { nodes, metrics } = layout;
   const baseScale = 0.34;
-  const previewWidth = Math.max(320, Math.round(metrics.width * baseScale));
-  const previewHeight = Math.max(240, Math.round(metrics.height * baseScale));
+  const previewTopInset = 28;
+  const previewContentWidth = Math.max(320, Math.round(metrics.width * baseScale));
+  const previewContentHeight = Math.max(240, Math.round(metrics.height * baseScale));
+  const previewWidth = previewContentWidth;
+  const previewHeight = previewContentHeight + previewTopInset;
 
   rootElement.innerHTML = `
     <main class="app-shell mobile-flow mobile-map-screen">
@@ -153,6 +156,8 @@ export function renderMobileMapView(
   });
 
   applyZoom(1);
+  stage.scrollLeft = 0;
+  stage.scrollTop = 0;
 
   renderConnections(lineLayer, nodes, metrics, {
     onBranchSlotClick: onBranchAction,
@@ -161,6 +166,9 @@ export function renderMobileMapView(
   lineLayer.style.transform = `scale(${baseScale})`;
   lineLayer.style.transformOrigin = "top left";
   lineLayer.style.pointerEvents = "all";
+  lineLayer.style.inset = `${previewTopInset}px auto auto 0`;
+  lineLayer.style.width = `${previewContentWidth}px`;
+  lineLayer.style.height = `${previewContentHeight}px`;
 
   for (const node of nodes) {
     const nodeButton = document.createElement("button");
@@ -171,7 +179,7 @@ export function renderMobileMapView(
       nodeButton.classList.add("mobile-problem-animation-stopped");
     }
     nodeButton.style.left = `${node.x * baseScale}px`;
-    nodeButton.style.top = `${node.y * baseScale}px`;
+    nodeButton.style.top = `${node.y * baseScale + previewTopInset}px`;
     nodeButton.style.width = `${metrics.nodeWidth * baseScale}px`;
     nodeButton.style.height = `${metrics.nodeHeight * baseScale}px`;
     nodeButton.textContent = getMobileNodeText(node);
